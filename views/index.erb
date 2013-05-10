@@ -34,7 +34,7 @@ BUSG
       <th>ID</th>
       <th>Story</th>
     </tr>
-    <% @bug.each do |hash| %>
+    <% @bug_v.each do |hash| %>
     <tr>
       <td><%= '[#'+hash.fetch('Id', 'no Id')+']'  %></td>
       <td><%= ' - '+hash.fetch('Story', 'no Story') %></td>
@@ -49,7 +49,7 @@ BUSG
 
   OTHERS
    <table>
-    <% @not_bug.each do |hash| %>
+    <% @not_bug_v.each do |hash| %>
     <tr>
       <td><%= '[#'+hash.fetch('Id', 'no Id')+']'  %></td>
       <td><%= ' - '+hash.fetch('Story', 'no Story') %></td>

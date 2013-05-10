@@ -4,45 +4,39 @@ require 'date'
 require 'active_support/core_ext/object'
 
 get '/' do
-	@bug, @not_bug, @table, @users, headers = [], [], [], [], []
+	bug, not_bug, table, @users, headers, table_selected, @bug_v, @not_bug_v = [], [], [], [], [], [], [], []
 	arr_of_arrs = CSV.read("dess.csv")
 	headers = arr_of_arrs[0]
 	arr_of_arrs.delete_at(0)
 	arr_of_arrs.each do |row|
 		row = headers.zip(row).flatten
-		@table << Hash[*row]
+		table << Hash[*row]
 	end
-	@table.each do |hash|
+	table.each do |hash|
 		hash['Created at'] = DateTime.parse(hash.fetch('Created at'))
 	end
-	@table.each { |hash| @users << hash.fetch('Owned By')}
+	table.each { |hash| @users << hash.fetch('Owned By')}
 	@users.uniq!.sort!.unshift("")
-	@table = @table.sort_by { |k| k['Created at'] }.reverse
-	@table.each do |hash|
-		if hash.fetch('Current State') == 'accepted' || hash.fetch('Current State') == 'finished' || hash.fetch('Current State') == 'delivered'
-			# Could use just .to_s == ""
+	table_selected = table.select { |k| k['Current State'] =~ /(accepted|finished|delivered)/ }
+	table_selected = table_selected.sort_by { |k| k['Created at'] }.reverse
+	bug = table_selected.select { |k| k['Story Type'] == 'bug' }
+	not_bug = table_selected.select { |k| !(k['Story Type'] == 'bug') }
 				if !params[:owned_by].blank? && params[:created_at].blank?
-					# Since params validates, we can remove strips
-					if hash.fetch('Owned By') == params[:owned_by].lstrip.rstrip
-						@bug << hash if hash.fetch('Story Type') == 'bug'
-						@not_bug << hash if !(hash.fetch('Story Type') == 'bug')
-					end
+					@bug_v = bug.select { |k| k['Owned By'] == params[:owned_by] }
+					@not_bug_v = not_bug.select { |k| k['Owned By'] == params[:owned_by] }
 				elsif params[:owned_by].blank? && !params[:created_at].blank?
-					if hash.fetch('Created at') == DateTime.parse(params[:created_at])
-						@bug << hash if hash.fetch('Story Type') == 'bug'
-						@not_bug << hash if !(hash.fetch('Story Type') == 'bug')
-					end
+					@bug_v = bug.select { |k| k['Created at'] == DateTime.parse(params[:created_at]) }
+					@not_bug_v = not_bug.select { |k| k['Created at'] == DateTime.parse(params[:created_at]) }
 				elsif !params[:owned_by].blank? && !params[:created_at].blank?
-					if hash.fetch('Created at') == DateTime.parse(params[:created_at]) && hash.fetch('Owned By') == params[:owned_by].lstrip.rstrip
-						@bug << hash if hash.fetch('Story Type') == 'bug'
-						@not_bug << hash if !(hash.fetch('Story Type') == 'bug')
-					end
+					not_bug_tmp, bug_tmp = [], []
+					bug_tmp = bug.select { |k| k['Created at'] == DateTime.parse(params[:created_at]) }
+					@bug_v = bug_tmp.select { |k| k['Owned By'] == params[:owned_by] }
+					not_bug_tmp = not_bug.select { |k| k['Created at'] == DateTime.parse(params[:created_at]) }
+					@not_bug_v = not_bug_tmp.select { |k| k['Owned By'] == params[:owned_by] }
 				else
-					@bug << hash if hash.fetch('Story Type') == 'bug'
-					@not_bug << hash if !(hash.fetch('Story Type') == 'bug')
+					@bug_v = bug
+					@not_bug_v = not_bug
 				end
-		end
-	end
 	erb :index
 end
 
