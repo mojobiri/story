@@ -39,7 +39,3 @@ get '/' do
 				end
 	erb :index
 end
-
- # row => {"first"=>"Oct 7, 2012", "third"=>"Oct 20, 2012", "second"=>"Oct 8, 2012"}
-
-# DateTime.parse(row['first']) == DateTime.parse("2012.10.07") => true
