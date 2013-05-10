@@ -28,11 +28,8 @@ get '/' do
 					@bug_v = bug.select { |k| k['Created at'] == DateTime.parse(params[:created_at]) }
 					@not_bug_v = not_bug.select { |k| k['Created at'] == DateTime.parse(params[:created_at]) }
 				elsif !params[:owned_by].blank? && !params[:created_at].blank?
-					not_bug_tmp, bug_tmp = [], []
-					bug_tmp = bug.select { |k| k['Created at'] == DateTime.parse(params[:created_at]) }
-					@bug_v = bug_tmp.select { |k| k['Owned By'] == params[:owned_by] }
-					not_bug_tmp = not_bug.select { |k| k['Created at'] == DateTime.parse(params[:created_at]) }
-					@not_bug_v = not_bug_tmp.select { |k| k['Owned By'] == params[:owned_by] }
+					@bug_v = bug.select { |k| k['Owned By'] == params[:owned_by] }.select { |k| k['Created at'] == DateTime.parse(params[:created_at]) }
+					@not_bug_v = not_bug.select { |k| k['Owned By'] == params[:owned_by] }.select { |k| k['Created at'] == DateTime.parse(params[:created_at]) }
 				else
 					@bug_v = bug
 					@not_bug_v = not_bug
