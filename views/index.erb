@@ -7,7 +7,7 @@ var data_valid=/^(0?[1-9]|[12][0-9]|3[01])[\/.](0?[1-9]|1[012])[\/.](19|20)\d\d$
 // causes error anyway if data entered didn't exists
 if (!data_valid.test(y) && !(y.length == 0))
   {
-  alert("Not a valid data field. Enter the data in appropriate format: dd/mm/yyyy or dd.mm.yyyy");
+  alert("Not a valid data field. Enter the data in appropriate format: dd/mm/yyyy");
   search.created_at.focus();
   return false;
   }
@@ -18,7 +18,7 @@ if (!data_valid.test(y) && !(y.length == 0))
 Search form
 <br />
 <form name="search" action="/" onsubmit="return validateForm();" method="get" >
- Created at: <input type="text" name="created_at"  /><br />
+ Created at: <input type="text" name="created_at" id="datepicker" /><br />
  Owned by:   <select name="owned_by" />
  <option value=""></option>
  <% @users.each do |u| %>
