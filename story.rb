@@ -4,23 +4,15 @@ require 'date'
 require 'active_support/core_ext/object'
 
 get '/' do
-	bug, not_bug, table, @users, headers, table_selected, @bug_v, @not_bug_v = [], [], [], [], [], [], [], []
-	arr_of_arrs = CSV.read("dess.csv")
-	headers = arr_of_arrs[0]
-	arr_of_arrs.delete_at(0)
-	arr_of_arrs.each do |row|
-		row = headers.zip(row).flatten
-		table << Hash[*row]
-	end
-	table.each do |hash|
-		hash['Created at'] = DateTime.parse(hash.fetch('Created at'))
-	end
-	table.each { |hash| @users << hash.fetch('Owned By')}
-	@users.uniq!.sort!.unshift("")
-	table_selected = table.select { |k| k['Current State'] =~ /(accepted|finished|delivered)/ }
-	table_selected = table_selected.sort_by { |k| k['Created at'] }.reverse
-	bug = table_selected.select { |k| k['Story Type'] == 'bug' }
-	not_bug = table_selected.select { |k| !(k['Story Type'] == 'bug') }
+	bug, not_bug, table, @users, @bug_v, @not_bug_v = [], [], [], [], [], []
+	table = CSV.read("dess.csv", {:headers => true})
+	table.each { |hash| hash['Created at'] = DateTime.parse(hash['Created at']) }
+	table.each { |hash| @users << hash['Owned By'] }
+	@users.uniq!.sort!
+	table = table.select { |k| k['Current State'] =~ /(accepted|finished|delivered)/ }
+	table = table.sort_by { |k| k['Created at'] }.reverse
+	bug = table.select { |k| k['Story Type'] == 'bug' }
+	not_bug = table.select { |k| !(k['Story Type'] == 'bug') }
 				if !params[:owned_by].blank? && params[:created_at].blank?
 					@bug_v = bug.select { |k| k['Owned By'] == params[:owned_by] }
 					@not_bug_v = not_bug.select { |k| k['Owned By'] == params[:owned_by] }
