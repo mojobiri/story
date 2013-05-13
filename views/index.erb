@@ -17,10 +17,11 @@ if (!data_valid.test(y) && !(y.length == 0))
 <br />
 Search form
 <br />
-<form name="search" action="/" onsubmit="return validateForm();" method="get">
+<form name="search" action="/" onsubmit="return validateForm();" method="get" >
  Created at: <input type="text" name="created_at"  /><br />
- Owned by:   <select name="owned_by"  />
- <% @users.each do |u| %>  
+ Owned by:   <select name="owned_by" />
+ <option value=""></option>
+ <% @users.each do |u| %>
  <option> <%= u %> </option>
   <% end %>
   <input type="submit" />
@@ -34,13 +35,13 @@ BUSG
       <th>ID</th>
       <th>Story</th>
     </tr>
-    <% @bug.each do |hash| %>
+    <% @bug_v.each do |hash| %>
     <tr>
-      <td><%= '[#'+hash.fetch('Id', 'no Id')+']'  %></td>
-      <td><%= ' - '+hash.fetch('Story', 'no Story') %></td>
-                  <td><%= hash.fetch('Current State', 'no Current State') %></td>
-            <td><%= hash.fetch('Created at', 'no Created at') %></td>
-            <td><%= hash.fetch('Owned By', 'no Owned By') %></td>
+      <td><%= '[#'+hash['Id']+']'  %></td>
+      <td><%= ' - '+hash['Story'] %></td>
+      <td><%= hash['Current State'] %></td>
+      <td><%= hash['Created at'] %></td>
+      <td><%= hash['Owned By'] %></td>
     </tr>
     <% end %>
   </table>
@@ -49,13 +50,13 @@ BUSG
 
   OTHERS
    <table>
-    <% @not_bug.each do |hash| %>
+    <% @not_bug_v.each do |hash| %>
     <tr>
-      <td><%= '[#'+hash.fetch('Id', 'no Id')+']'  %></td>
-      <td><%= ' - '+hash.fetch('Story', 'no Story') %></td>
-                        <td><%= hash.fetch('Current State', 'no Current State') %></td>
-            <td><%= hash.fetch('Created at', 'no Created at') %></td>
-            <td><%= hash.fetch('Owned By', 'no Owned By') %></td>
+      <td><%= '[#'+hash['Id']+']'  %></td>
+      <td><%= ' - '+hash['Story'] %></td>
+      <td><%= hash['Current State'] %></td>
+      <td><%= hash['Created at'] %></td>
+      <td><%= hash['Owned By'] %></td>
     </tr>
     <% end %>
   </table>
